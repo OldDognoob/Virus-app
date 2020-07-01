@@ -1,27 +1,41 @@
-import React from "react";
+import React from 'react';
 
-import { Cards, Chart, CountryPicker } from "./components";
-import styles from "./App.module.css";
-import { fetchData } from "./api/";
+import { Cards, CountryPicker, Chart } from './components';
+import { fetchData } from './api/';
+import styles from './App.module.css';
+
+import image from './assets/covid-virus.jpg';
 
 class App extends React.Component {
-    state = {
-        data:{},
-    }
-    async componentDidMount() {
+  state = {
+    data: {},
+    country: '',
+  }
+
+  async componentDidMount() {
     const data = await fetchData();
 
-    this.setState({data});
+    this.setState({ data });
   }
+
+  handleCountryChange = async (country) => {
+    const data = await fetchData(country);
+
+    this.setState({ data, country: country });
+  }
+
   render() {
-      const { data } = this.state;
+    const { data, country } = this.state;
+
     return (
       <div className={styles.container}>
+        <img className={styles.image} src={image} alt="COVID-19" />
         <Cards data={data} />
-        <CountryPicker />
-        <Chart />
+        <CountryPicker handleCountryChange={this.handleCountryChange} />
+        <Chart data={data} country={country} /> 
       </div>
     );
   }
 }
+
 export default App;
